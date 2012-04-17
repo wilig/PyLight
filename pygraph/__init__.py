@@ -2,6 +2,9 @@ import ast
 import inspect
 
 def graph(func):
+    """
+    Print out a all the functions called by func.
+    """
     funcs = _graph(func, [])
     print "\nCall graph\n---------------------"
     for f in funcs:
@@ -9,6 +12,9 @@ def graph(func):
         print ''.join(inspect.getsource(f))
 
 def _graph(func, visited_funcs):
+    """
+    Recursively build a list of all the functions called by func.
+    """
     if func not in visited_funcs:
         visited_funcs.append(func)
         context = func.__globals__
@@ -18,6 +24,9 @@ def _graph(func, visited_funcs):
         return visited_funcs
 
 def _resolve_calls(calls, context):
+    """
+    Resolve function names to functions within context.
+    """
     funcs = []
     for call in calls:
         if type(call.func) is ast.Name:
@@ -26,7 +35,8 @@ def _resolve_calls(calls, context):
                 funcs.append(func)
             except KeyError:
                 print "Warning, couldn't resolve '%s'" % call.func.id
-        elif type(call.func) is ast.Attribute and type(call.func.value) is not ast.Subscript:
+        elif (type(call.func) is ast.Attribute and
+              type(call.func.value) is not ast.Subscript):
             print ("Error resolving %s.%s failed can't resolve attribute "
                    "lookups yet." % (call.func.value.id, call.func.attr))
     return funcs
