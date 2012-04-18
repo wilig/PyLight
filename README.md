@@ -4,7 +4,7 @@ Warning:  Early alpha software ahead!
 
 During my exploration of bringing the Meta II compiler to Python I was interrupted by the insanely cool Light Table demo video.  If you haven't seen it, go watch it now!
 
-Since I was already digging thru the tokenizer and compiler for Python so I decided if I could achieve the live tracing that was demoed in the video.
+Since I was already digging thru the tokenizer and compiler for Python I decided to see if I could achieve the live tracing as seen in Light Table.
 
 The fruits of my labor is PyLight.
 
