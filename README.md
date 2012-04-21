@@ -1,5 +1,7 @@
 # PyLight - A Light Table backend for Python #
 
+Update:  Contribute to the development of LightTable:  KickStarter - http://www.kickstarter.com/projects/306316578/light-table
+
 Warning:  Early alpha software ahead!
 
 During my exploration of bringing the Meta II compiler to Python I was interrupted by the insanely cool Light Table demo video.  If you haven't seen it, go watch it now!
@@ -10,7 +12,7 @@ The fruits of my labor is PyLight.
 
 PyLight runs python code and prints out the substitutions as shown in the Light Table video.
 
-_Shut up, and show me_
+*Shut up, and show me*
 
 Simple example:
 
@@ -27,7 +29,7 @@ Simple example:
 
 To see the substitutions for this file run it with PyLight like so:
 
-   python pylight.py test.py
+   pylight test.py
 
 You should see the following:
 
@@ -90,7 +92,7 @@ Output:
     * Fix class handling
     * Show internal iteration properly for some value of properly
     * Chase down endless edge cases
-    * Add support to pull out a call graph for a function
+    * Add support to pull out a call graph for a function [in progress]
 
 ## Call for help ##
 
