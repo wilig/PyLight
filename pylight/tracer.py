@@ -1,11 +1,14 @@
 import sys
 import inspect
 import tokenize
-from StringIO import StringIO
+from cStringIO import StringIO
 
-function_calls = []
-current_locals = []
-touched_functions = {}
+
+__all__ = ['print_trace']
+
+_function_calls = []
+_current_locals = []
+_touched_functions = {}
 
 def _update_token(token, new_value):
     """
@@ -44,33 +47,33 @@ def _substitute(func, scope, line, index, lines):
                 except AttributeError:
                     pass
         translated_tokens = tokenize.untokenize(tokens)
-        if func in touched_functions:
-            touched_functions[func][-1][line-index] = translated_tokens
+        if func in _touched_functions:
+            _touched_functions[func][-1][line-index] = translated_tokens
         else:
             lines[line-index] = translated_tokens
-            touched_functions[func][-1] = lines
+            _touched_functions[func][-1] = lines
 
 def _new_context(func, lines):
     """
     Handle recursive functions by creating a new context for each call.
     """
-    if func in touched_functions:
-        touched_functions[func].append(lines)
+    if func in _touched_functions:
+        _touched_functions[func].append(lines)
     else:
-        touched_functions[func] = [lines]
+        _touched_functions[func] = [lines]
 
 def _pop_context(func):
     """
     Remove the context from the list when a function returns.
     """
-    return touched_functions[func].pop()
+    return _touched_functions[func].pop()
 
 def _add_locals(locals):
-    current_locals.append(locals)
+    _current_locals.append(locals)
 
 def _clear_locals():
-    locals = current_locals
-    #current_locals.clear()
+    locals = _current_locals
+    #_current_locals.clear()
     return locals
 
 def _trace(frame, event, arg, verbose=False):
@@ -88,27 +91,32 @@ def _trace(frame, event, arg, verbose=False):
         lines, index = inspect.getsourcelines(frame.f_code)
         if event == 'call':
             _new_context(func, lines)
-        if event == 'return' and func in touched_functions:
+        if event == 'return' and func in _touched_functions:
             final_code = ''.join(_pop_context(func))
-            function_calls.append((final_code, _clear_locals()))
+            _function_calls.append((final_code, _clear_locals()))
         else:
             _substitute(frame.f_code.co_name, scope, line_num, index, lines)
     except IOError:
         pass  # Happens when there is no source for a call
     return _trace
 
-def print_trace():
-    for func in reversed(function_calls):
+def _print_trace():
+    for func in reversed(_function_calls):
         print func[0]
 
-def usage():
-    print "python pylight.py {python file}"
+def print_trace(func, *args, **kwargs):
+    sys.settrace(_trace)
+    func(*args, **kwargs)
+    sys.settrace(None)
+    _print_trace()
 
-if __name__ == '__main__':
+def exec_trace():
     if len(sys.argv) == 2:
         sys.settrace(_trace)
-        execfile(sys.argv[1])
+        src = open(sys.argv[1], 'r').read()
+        code = compile(src, sys.argv[1], 'exec')
+        exec code in {}
         sys.settrace(None)
-        print_trace()
+        _print_trace()
     else:
-        print usage()
+        print "pylight file_to_execute"
