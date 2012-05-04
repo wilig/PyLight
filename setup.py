@@ -9,7 +9,7 @@ def read(fname):
 setup(name='pylight',
       version=version,
       description="A Python backend for LightTable",
-      long_description=read('readme.md'),
+      long_description=read('README.md'),
       classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Topic :: Software Development :: Build Tools',
